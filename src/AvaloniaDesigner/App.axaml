@@ -5,27 +5,105 @@
   <Application.Styles>
     <FluentTheme />
     <StyleInclude Source="avares://Avalonia.Controls.ColorPicker/Themes/Fluent/Fluent.xaml" />
+    
+    <!-- Studio Window Theme -->
     <Style Selector="Window.studio">
-      <Setter Property="FontFamily" Value="Inter, sans-serif" />
+      <Setter Property="FontFamily" Value="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" />
       <Setter Property="FontSize" Value="13" />
-      <Setter Property="Background" Value="#101218" />
+      <Setter Property="Background" Value="#0F1117" />
     </Style>
+
+    <!-- Toolbar & Tool Buttons -->
     <Style Selector="Button.tool">
       <Setter Property="Background" Value="Transparent" />
-      <Setter Property="Padding" Value="12,8" />
+      <Setter Property="Foreground" Value="#B4BCD0" />
+      <Setter Property="Padding" Value="10,6" />
       <Setter Property="CornerRadius" Value="6" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.12" />
+          <BrushTransition Property="Foreground" Duration="0:0:0.12" />
+        </Transitions>
+      </Setter>
     </Style>
+    <Style Selector="Button.tool:pointerover">
+      <Setter Property="Background" Value="#232838" />
+      <Setter Property="Foreground" Value="#FFFFFF" />
+    </Style>
+    <Style Selector="Button.tool:pressed">
+      <Setter Property="Background" Value="#1A1E2B" />
+      <Setter Property="Foreground" Value="#D0D6E8" />
+    </Style>
+    <Style Selector="Button.tool:disabled">
+      <Setter Property="Opacity" Value="0.38" />
+    </Style>
+
+    <!-- Primary Accent Buttons -->
     <Style Selector="Button.primary">
-      <Setter Property="Background" Value="#7162E8" />
+      <Setter Property="Background" Value="#6A54F0" />
       <Setter Property="Foreground" Value="White" />
+      <Setter Property="FontWeight" Value="SemiBold" />
       <Setter Property="CornerRadius" Value="6" />
+      <Setter Property="Padding" Value="14,7" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.12" />
+        </Transitions>
+      </Setter>
     </Style>
+    <Style Selector="Button.primary:pointerover">
+      <Setter Property="Background" Value="#7C66FF" />
+    </Style>
+    <Style Selector="Button.primary:pressed">
+      <Setter Property="Background" Value="#5540E0" />
+    </Style>
+    <Style Selector="Button.primary:disabled">
+      <Setter Property="Opacity" Value="0.4" />
+    </Style>
+
+    <!-- Section Headers -->
     <Style Selector="TextBlock.section">
-      <Setter Property="Foreground" Value="#969BAE" />
-      <Setter Property="FontSize" Value="11" />
+      <Setter Property="Foreground" Value="#868D9F" />
+      <Setter Property="FontSize" Value="10" />
       <Setter Property="FontWeight" Value="SemiBold" />
       <Setter Property="LetterSpacing" Value="1.4" />
       <Setter Property="Margin" Value="0,8,0,8" />
+    </Style>
+
+    <!-- Status Badges & Pills -->
+    <Style Selector="Border.badge">
+      <Setter Property="Background" Value="#1A1E2A" />
+      <Setter Property="BorderBrush" Value="#2A3042" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="CornerRadius" Value="4" />
+      <Setter Property="Padding" Value="7,3" />
+    </Style>
+
+    <!-- Viewport Resize Strip Handles -->
+    <Style Selector="Border.viewport-handle">
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.15" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="Border.viewport-handle:pointerover">
+      <Setter Property="Background" Value="#505A80" />
+    </Style>
+
+    <!-- Subtle GridSplitters -->
+    <Style Selector="GridSplitter">
+      <Setter Property="Background" Value="#222634" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.15" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="GridSplitter:pointerover">
+      <Setter Property="Background" Value="#4A526E" />
     </Style>
   </Application.Styles>
 </Application>

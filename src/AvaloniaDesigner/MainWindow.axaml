@@ -1,129 +1,249 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="AvaloniaDesigner.MainWindow"
-        Title="Avalonia Studio" Width="1500" Height="940" MinWidth="1100" MinHeight="720"
+        Title="Avalonia Studio" Width="1520" Height="960" MinWidth="1100" MinHeight="720"
         Classes="studio" WindowStartupLocation="CenterScreen">
-  <Grid RowDefinitions="60,48,*,30">
-    <Border Background="#181B23" BorderBrush="#2B2F3C" BorderThickness="0,0,0,1" Padding="18,0">
-      <Grid ColumnDefinitions="240,*,Auto">
+  <Grid RowDefinitions="56,44,*,30">
+    <!-- Top Header Bar -->
+    <Border Background="#151720" BorderBrush="#252A38" BorderThickness="0,0,0,1" Padding="18,0">
+      <Grid ColumnDefinitions="260,*,Auto">
+        <!-- Brand Mark -->
         <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-          <Border Background="#7864E8" Width="30" Height="30" CornerRadius="8">
-            <TextBlock Text="A" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+          <Border Background="#6854E8" Width="30" Height="30" CornerRadius="8">
+            <TextBlock Text="A" FontSize="18" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
           </Border>
-          <TextBlock Text="avalonia" FontSize="19" FontWeight="SemiBold" VerticalAlignment="Center" />
-          <TextBlock Text="STUDIO" FontSize="10" Foreground="#A797FF" VerticalAlignment="Center" LetterSpacing="2" />
+          <TextBlock Text="avalonia" FontSize="18" FontWeight="SemiBold" Foreground="#ECEFF7" VerticalAlignment="Center" />
+          <Border Background="#25293B" CornerRadius="4" Padding="5,2" VerticalAlignment="Center">
+            <TextBlock Text="STUDIO" FontSize="9" FontWeight="Bold" Foreground="#A797FF" LetterSpacing="1.8" />
+          </Border>
         </StackPanel>
+
+        <!-- Document Operations Toolbar -->
         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
           <Button x:Name="NewButton" Content="New" Classes="tool" ToolTip.Tip="New view · Ctrl/Cmd+N" />
           <Button x:Name="OpenButton" Content="Open" Classes="tool" ToolTip.Tip="Open AXAML · Ctrl/Cmd+O" />
           <Button x:Name="RecentButton" Content="Recent" Classes="tool" ToolTip.Tip="Open a recent file" />
           <Button x:Name="SaveButton" Content="Save" Classes="tool" ToolTip.Tip="Save · Ctrl/Cmd+S" />
-          <Button x:Name="SaveAsButton" Content="Save as…" Classes="tool" />
-          <Border Width="1" Background="#373B49" Margin="10,8" />
+          <Button x:Name="SaveAsButton" Content="Save as…" Classes="tool" ToolTip.Tip="Save as new file · Ctrl/Cmd+Shift+S" />
+          <Border Width="1" Background="#2E3446" Margin="8,8" />
           <Button x:Name="UndoButton" Content="↶" Classes="tool" ToolTip.Tip="Undo · Ctrl/Cmd+Z" />
-          <Button x:Name="RedoButton" Content="↷" Classes="tool" ToolTip.Tip="Redo · Ctrl/Cmd+Shift+Z" />
+          <Button x:Name="RedoButton" Content="↷" Classes="tool" ToolTip.Tip="Redo · Ctrl/Cmd+Shift+Z or Ctrl+Y" />
         </StackPanel>
-        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-          <TextBlock x:Name="FileLabel" Text="Untitled.axaml" Foreground="#9DA3B7" VerticalAlignment="Center" MaxWidth="240" TextTrimming="CharacterEllipsis" />
-          <ToggleButton x:Name="InteractButton" Content="▶  Interact" ToolTip.Tip="Use the actual controls without selecting them" />
+
+        <!-- Active File Pill & Mode Toggle -->
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+          <Border Background="#1C202C" BorderBrush="#2B3144" BorderThickness="1" CornerRadius="6" Padding="10,5">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <Ellipse Width="7" Height="7" Fill="#6CE89A" VerticalAlignment="Center" />
+              <TextBlock x:Name="FileLabel" Text="Untitled.axaml" Foreground="#A8B2C8" FontSize="12" VerticalAlignment="Center" MaxWidth="220" TextTrimming="CharacterEllipsis" />
+            </StackPanel>
+          </Border>
+          <ToggleButton x:Name="InteractButton" Content="▶  Interact" ToolTip.Tip="Interact with live controls without selecting them" />
         </StackPanel>
       </Grid>
     </Border>
-    <Border Grid.Row="1" Background="#14171E" BorderBrush="#2B2F3C" BorderThickness="0,0,0,1" Padding="16,6">
+
+    <!-- Secondary Workspace Toolbar -->
+    <Border Grid.Row="1" Background="#12141C" BorderBrush="#242836" BorderThickness="0,0,0,1" Padding="16,4">
       <Grid ColumnDefinitions="240,*,Auto">
         <TextBlock Text="DESIGN WORKSPACE" Classes="section" VerticalAlignment="Center" Margin="0" />
-        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
-          <ComboBox x:Name="ThemePicker" Width="105" SelectedIndex="0">
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+          <ComboBox x:Name="ThemePicker" Width="105" SelectedIndex="0" ToolTip.Tip="Preview Control Theme">
             <ComboBoxItem Content="Fluent" /><ComboBoxItem Content="Simple" />
           </ComboBox>
-          <ComboBox x:Name="VariantPicker" Width="95" SelectedIndex="0">
+          <ComboBox x:Name="VariantPicker" Width="95" SelectedIndex="0" ToolTip.Tip="Preview Theme Variant">
             <ComboBoxItem Content="Dark" /><ComboBoxItem Content="Light" />
           </ComboBox>
-          <ComboBox x:Name="ViewportPicker" Width="150" SelectedIndex="0">
-            <ComboBoxItem Content="Desktop · 800×600" /><ComboBoxItem Content="Tablet · 768×1024" /><ComboBoxItem Content="Phone · 390×844" />
+          <ComboBox x:Name="ViewportPicker" Width="175" SelectedIndex="0" ToolTip.Tip="Viewport Size Preset">
+            <ComboBoxItem Content="Desktop · 800×600" />
+            <ComboBoxItem Content="Laptop · 1366×768" />
+            <ComboBoxItem Content="Desktop HD · 1280×720" />
+            <ComboBoxItem Content="Desktop FHD · 1920×1080" />
+            <ComboBoxItem Content="Tablet Portrait · 768×1024" />
+            <ComboBoxItem Content="Tablet Landscape · 1024×768" />
+            <ComboBoxItem Content="Phone · 390×844" />
+            <ComboBoxItem Content="Mobile Large · 412×915" />
+            <ComboBoxItem Content="Dialog · 480×320" />
+            <ComboBoxItem Content="Custom" />
           </ComboBox>
-          <CheckBox x:Name="SnapCheck" Content="Snap 8px" IsChecked="True" VerticalAlignment="Center" />
+          <CheckBox x:Name="SnapCheck" Content="Snap 8px" IsChecked="True" VerticalAlignment="Center" ToolTip.Tip="Snap canvas movement and resize to 8px grid" />
         </StackPanel>
-        <ComboBox x:Name="ZoomPicker" Grid.Column="2" Width="90" SelectedIndex="2">
-          <ComboBoxItem Content="50%" /><ComboBoxItem Content="75%" /><ComboBoxItem Content="100%" /><ComboBoxItem Content="125%" /><ComboBoxItem Content="150%" />
-        </ComboBox>
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+          <TextBlock Text="Zoom:" Foreground="#7C849B" FontSize="11" VerticalAlignment="Center" />
+          <ComboBox x:Name="ZoomPicker" Width="85" SelectedIndex="2" ToolTip.Tip="Canvas Zoom (Ctrl+Wheel, Ctrl+0 to reset)">
+            <ComboBoxItem Content="50%" /><ComboBoxItem Content="75%" /><ComboBoxItem Content="100%" /><ComboBoxItem Content="125%" /><ComboBoxItem Content="150%" />
+          </ComboBox>
+        </StackPanel>
       </Grid>
     </Border>
-    <Grid Grid.Row="2" ColumnDefinitions="240,5,*,5,300">
-      <Grid Background="#181B23" RowDefinitions="*,5,*">
-        <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="12">
+
+    <!-- Main Workspace Area -->
+    <Grid Grid.Row="2" ColumnDefinitions="250,5,*,5,310">
+      <!-- Left Panel: Toolbox & Document Outline -->
+      <Grid Background="#151720" RowDefinitions="*,5,*">
+        <!-- Toolbox -->
+        <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="12,10,12,10">
           <TextBlock Text="TOOLBOX" Classes="section" />
           <TextBox x:Name="ToolSearch" Grid.Row="1" Watermark="Search controls…" Margin="0,0,0,10" />
           <ListBox x:Name="ToolList" Grid.Row="2" Background="Transparent" />
-          <Button x:Name="AddButton" Grid.Row="3" Content="＋  Add to selection" Classes="primary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,10,0,0" />
+          <Button x:Name="AddButton" Grid.Row="3" Content="＋  Add to selection" Classes="primary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,8,0,0" />
         </Grid>
-        <GridSplitter Grid.Row="1" ResizeDirection="Rows" HorizontalAlignment="Stretch" Background="#2B2F3C" />
-        <Grid Grid.Row="2" RowDefinitions="Auto,*,Auto" Margin="12,4,12,12">
+
+        <GridSplitter Grid.Row="1" ResizeDirection="Rows" HorizontalAlignment="Stretch" Background="#242836" />
+
+        <!-- Document Outline -->
+        <Grid Grid.Row="2" RowDefinitions="Auto,*,Auto" Margin="12,6,12,12">
           <TextBlock Text="DOCUMENT OUTLINE" Classes="section" />
           <ListBox x:Name="OutlineList" Grid.Row="1" Background="Transparent" />
-          <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="3" Margin="0,8,0,0">
-            <Button x:Name="UpButton" Content="↑" ToolTip.Tip="Move earlier" />
-            <Button x:Name="DownButton" Content="↓" ToolTip.Tip="Move later" />
-            <Button x:Name="DuplicateButton" Content="⧉" ToolTip.Tip="Duplicate · Ctrl/Cmd+D" />
-            <Button x:Name="PasteButton" Content="⎘" ToolTip.Tip="Paste · Ctrl+V" />
-            <Button x:Name="DeleteButton" Content="Delete" ToolTip.Tip="Delete selected control" />
+          <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="4" Margin="0,8,0,0">
+            <Button x:Name="UpButton" Content="↑" Classes="tool" ToolTip.Tip="Move earlier in parent" />
+            <Button x:Name="DownButton" Content="↓" Classes="tool" ToolTip.Tip="Move later in parent" />
+            <Button x:Name="DuplicateButton" Content="⧉" Classes="tool" ToolTip.Tip="Duplicate · Ctrl/Cmd+D" />
+            <Button x:Name="PasteButton" Content="⎘" Classes="tool" ToolTip.Tip="Paste · Ctrl+V" />
+            <Button x:Name="DeleteButton" Content="Delete" Classes="tool" ToolTip.Tip="Delete selected control · Del" />
           </StackPanel>
         </Grid>
       </Grid>
-      <GridSplitter Grid.Column="1" ResizeDirection="Columns" Background="#2B2F3C" />
-      <Grid Grid.Column="2" RowDefinitions="*,Auto,5,230">
-        <ScrollViewer x:Name="DesignScroll" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Background="#101218">
-          <StackPanel HorizontalAlignment="Center" Margin="36,24">
-            <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,12">
-              <TextBlock Text="VIEW / LIVE PREVIEW" Foreground="#7E859B" FontSize="10" LetterSpacing="1.5" />
-              <TextBlock x:Name="SizeLabel" Grid.Column="1" Text="800 × 600" Foreground="#7E859B" FontSize="10" />
+
+      <GridSplitter Grid.Column="1" ResizeDirection="Columns" Background="#242836" />
+
+      <!-- Center Panel: Preview Canvas & AXAML Source Editor -->
+      <Grid Grid.Column="2" RowDefinitions="*,Auto,5,240">
+        <!-- Preview Panel -->
+        <Grid RowDefinitions="Auto,*">
+          <!-- Viewport Interactive Control Bar (in Preview Panel) -->
+          <Border Background="#14161F" BorderBrush="#252A38" BorderThickness="0,0,0,1" Padding="14,8">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+              <!-- Viewport Presets Selector -->
+              <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Border Background="#202434" CornerRadius="4" Padding="6,2">
+                  <TextBlock Text="VIEWPORT" Foreground="#959DB4" FontSize="10" FontWeight="SemiBold" LetterSpacing="1.2" VerticalAlignment="Center" />
+                </Border>
+                <ComboBox x:Name="PreviewViewportPresetPicker" Width="165" SelectedIndex="0" ToolTip.Tip="Choose device preset or type custom dimensions">
+                  <ComboBoxItem Content="Desktop · 800×600" />
+                  <ComboBoxItem Content="Laptop · 1366×768" />
+                  <ComboBoxItem Content="Desktop HD · 1280×720" />
+                  <ComboBoxItem Content="Desktop FHD · 1920×1080" />
+                  <ComboBoxItem Content="Tablet Portrait · 768×1024" />
+                  <ComboBoxItem Content="Tablet Landscape · 1024×768" />
+                  <ComboBoxItem Content="Phone · 390×844" />
+                  <ComboBoxItem Content="Mobile Large · 412×915" />
+                  <ComboBoxItem Content="Dialog · 480×320" />
+                  <ComboBoxItem Content="Custom" />
+                </ComboBox>
+              </StackPanel>
+
+              <!-- Custom Width & Height Inputs & Orientation Flip -->
+              <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="5" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="W:" Foreground="#7C849B" FontSize="11" VerticalAlignment="Center" />
+                <TextBox x:Name="ViewportWidthBox" Text="800" Width="64" TextAlignment="Center" FontSize="12" Padding="4,3" ToolTip.Tip="Viewport Width in pixels · press Enter to apply" />
+                <TextBlock Text="×" Foreground="#60677C" FontSize="12" VerticalAlignment="Center" Margin="2,0" />
+                <TextBlock Text="H:" Foreground="#7C849B" FontSize="11" VerticalAlignment="Center" />
+                <TextBox x:Name="ViewportHeightBox" Text="600" Width="64" TextAlignment="Center" FontSize="12" Padding="4,3" ToolTip.Tip="Viewport Height in pixels · press Enter to apply" />
+                <TextBlock Text="px" Foreground="#60677C" FontSize="11" VerticalAlignment="Center" Margin="0,0,6,0" />
+                <Button x:Name="FlipViewportButton" Content="⇄" Classes="tool" Padding="6,4" ToolTip.Tip="Flip Orientation (Swap Width &amp; Height)" />
+                <Button x:Name="ResetViewportButton" Content="↺" Classes="tool" Padding="6,4" ToolTip.Tip="Reset Viewport to 800×600" />
+              </StackPanel>
+
+              <!-- Viewport Dimension Badge & Zoom Reset -->
+              <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button x:Name="FitZoomButton" Content="100%" Classes="tool" Padding="8,4" ToolTip.Tip="Reset Zoom to 100% · Ctrl+0" />
+                <Border Background="#1C202C" BorderBrush="#2B3144" BorderThickness="1" CornerRadius="5" Padding="8,3">
+                  <TextBlock x:Name="SizeLabel" Text="800 × 600" Foreground="#A4ADC4" FontSize="11" FontWeight="Medium" />
+                </Border>
+              </StackPanel>
             </Grid>
-            <LayoutTransformControl x:Name="ZoomHost">
-              <Grid x:Name="Artboard" Width="800" Height="600" ClipToBounds="True" Background="#20232C">
-                <ThemeVariantScope x:Name="PreviewTheme">
-                  <Border x:Name="PreviewHost" Background="{DynamicResource ThemeBackgroundBrush}" />
-                </ThemeVariantScope>
-                <Canvas x:Name="SelectionLayer" IsHitTestVisible="False">
-                  <Border x:Name="SelectionBorder" BorderBrush="#A391FF" BorderThickness="2" IsVisible="False" />
-                  <Border x:Name="ResizeHandle" Width="10" Height="10" Background="#A391FF" BorderBrush="White" BorderThickness="1" IsVisible="False" />
-                </Canvas>
-                <Border x:Name="InputLayer" Background="Transparent" Focusable="True" />
-              </Grid>
-            </LayoutTransformControl>
-          </StackPanel>
-        </ScrollViewer>
-        <Border x:Name="ErrorPanel" Grid.Row="1" Background="#3C222D" Padding="12,8" IsVisible="False">
-          <TextBlock x:Name="ErrorLabel" Foreground="#FFAFBF" TextWrapping="Wrap" MaxHeight="80" />
+          </Border>
+
+          <!-- Design Canvas Scroll Viewer -->
+          <ScrollViewer Grid.Row="1" x:Name="DesignScroll" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Background="#0C0E14">
+            <StackPanel HorizontalAlignment="Center" Margin="32,24">
+              <LayoutTransformControl x:Name="ZoomHost">
+                <!-- Artboard Frame with drop shadow and outer resize handles -->
+                <Border CornerRadius="4" BoxShadow="0 10 40 #55000000" BorderBrush="#2C3246" BorderThickness="1">
+                  <Grid>
+                    <!-- Artboard -->
+                    <Grid x:Name="Artboard" Width="800" Height="600" ClipToBounds="True" Background="#1D202B">
+                      <ThemeVariantScope x:Name="PreviewTheme">
+                        <Border x:Name="PreviewHost" Background="{DynamicResource ThemeBackgroundBrush}" />
+                      </ThemeVariantScope>
+                      <Canvas x:Name="SelectionLayer" IsHitTestVisible="False">
+                        <Border x:Name="SelectionBorder" BorderBrush="#A391FF" BorderThickness="2" IsVisible="False" />
+                        <Border x:Name="ResizeHandle" Width="10" Height="10" Background="#A391FF" BorderBrush="White" BorderThickness="1" IsVisible="False" />
+                      </Canvas>
+                      <Border x:Name="InputLayer" Background="Transparent" Focusable="True" />
+                    </Grid>
+
+                    <!-- Interactive Viewport Drag Resizers (Right edge, Bottom edge, Corner grip) -->
+                    <Border x:Name="ViewportResizeRight" Width="8" HorizontalAlignment="Right" VerticalAlignment="Stretch"
+                            Background="Transparent" ZIndex="10" Classes="viewport-handle" Cursor="SizeWestEast"
+                            ToolTip.Tip="Drag to resize viewport width" />
+                    <Border x:Name="ViewportResizeBottom" Height="8" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"
+                            Background="Transparent" ZIndex="10" Classes="viewport-handle" Cursor="SizeNorthSouth"
+                            ToolTip.Tip="Drag to resize viewport height" />
+                    <Border x:Name="ViewportResizeCorner" Width="18" Height="18" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                            Background="#262B3B" BorderBrush="#48526E" BorderThickness="1,1,0,0" CornerRadius="3,0,3,0"
+                            ZIndex="10" Classes="viewport-handle" Cursor="BottomRightCorner"
+                            ToolTip.Tip="Drag to resize viewport width and height">
+                      <TextBlock Text="⤡" IsHitTestVisible="False" FontSize="10" Foreground="#8A95B2" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0" />
+                    </Border>
+                  </Grid>
+                </Border>
+              </LayoutTransformControl>
+            </StackPanel>
+          </ScrollViewer>
+        </Grid>
+
+        <!-- Error Notification Panel -->
+        <Border x:Name="ErrorPanel" Grid.Row="1" Background="#3A1C25" BorderBrush="#5F2636" BorderThickness="0,1,0,1" Padding="14,8" IsVisible="False">
+          <Grid ColumnDefinitions="Auto,*,Auto">
+            <TextBlock Text="⚠" FontSize="14" Foreground="#FF8A9E" VerticalAlignment="Center" Margin="0,0,10,0" />
+            <TextBlock x:Name="ErrorLabel" Grid.Column="1" Foreground="#FFBDC9" TextWrapping="Wrap" MaxHeight="80" VerticalAlignment="Center" />
+            <Button x:Name="DismissErrorButton" Grid.Column="2" Content="✕" Classes="tool" Padding="6,2" VerticalAlignment="Center" ToolTip.Tip="Dismiss error" />
+          </Grid>
         </Border>
-        <GridSplitter Grid.Row="2" ResizeDirection="Rows" HorizontalAlignment="Stretch" Background="#2B2F3C" />
-        <Grid Grid.Row="3" RowDefinitions="42,*" Background="#151820">
-          <Grid ColumnDefinitions="*,Auto,Auto,Auto" Margin="12,5">
+
+        <GridSplitter Grid.Row="2" ResizeDirection="Rows" HorizontalAlignment="Stretch" Background="#242836" />
+
+        <!-- AXAML Source Editor -->
+        <Grid Grid.Row="3" RowDefinitions="40,*" Background="#13161F">
+          <Grid ColumnDefinitions="*,Auto,Auto,Auto" Margin="14,4">
             <TextBlock x:Name="SourceLabel" Text="AXAML SOURCE" Classes="section" Margin="0" VerticalAlignment="Center" />
-            <Button x:Name="StyleButton" Grid.Column="1" Content="Create style…" Classes="tool" />
-            <Button x:Name="RevertSourceButton" Grid.Column="2" Content="Revert draft" Classes="tool" Margin="0,0,8,0" />
-            <Button x:Name="ApplySourceButton" Grid.Column="3" Content="Apply AXAML" Classes="primary" ToolTip.Tip="Apply source · Ctrl/Cmd+Enter" />
+            <Button x:Name="StyleButton" Grid.Column="1" Content="Create style…" Classes="tool" ToolTip.Tip="Extract current styling into reusable style" />
+            <Button x:Name="RevertSourceButton" Grid.Column="2" Content="Revert draft" Classes="tool" Margin="0,0,8,0" ToolTip.Tip="Revert unapplied source edits" />
+            <Button x:Name="ApplySourceButton" Grid.Column="3" Content="Apply AXAML" Classes="primary" ToolTip.Tip="Apply source edits · Ctrl/Cmd+Enter" />
           </Grid>
           <TextBox x:Name="SourceEditor" Grid.Row="1" AcceptsReturn="True" AcceptsTab="True"
-                   FontFamily="Cascadia Code, DejaVu Sans Mono, monospace" FontSize="12"
-                   TextWrapping="NoWrap" Background="#11141B" BorderThickness="0" Padding="16,12"
+                   FontFamily="Cascadia Code, JetBrains Mono, DejaVu Sans Mono, monospace" FontSize="12"
+                   TextWrapping="NoWrap" Background="#0E1017" BorderThickness="0" Padding="16,12"
                    ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" />
         </Grid>
       </Grid>
-      <GridSplitter Grid.Column="3" ResizeDirection="Columns" Background="#2B2F3C" />
-      <Grid Grid.Column="4" Background="#181B23" RowDefinitions="Auto,Auto,Auto,Auto,*" Margin="0">
-        <TextBlock Text="INSPECTOR" Classes="section" Margin="16,18,16,8" />
-        <TextBlock x:Name="SelectionTitle" Grid.Row="1" Text="Select a control" FontSize="21" FontWeight="SemiBold" Margin="16,0,16,12" />
-        <TextBox x:Name="PropertySearch" Grid.Row="2" Watermark="Filter properties…" Margin="12,0,12,10" />
-        <TextBlock Grid.Row="3" Text="Enter or leave a field to apply · ↺ resets" Foreground="#838BA2" FontSize="10" Margin="16,0,12,10" />
+
+      <GridSplitter Grid.Column="3" ResizeDirection="Columns" Background="#242836" />
+
+      <!-- Right Panel: Inspector -->
+      <Grid Grid.Column="4" Background="#151720" RowDefinitions="Auto,Auto,Auto,Auto,*" Margin="0">
+        <TextBlock Text="INSPECTOR" Classes="section" Margin="16,16,16,6" />
+        <TextBlock x:Name="SelectionTitle" Grid.Row="1" Text="Select a control" FontSize="19" FontWeight="SemiBold" Foreground="#ECEFF7" Margin="16,0,16,10" />
+        <TextBox x:Name="PropertySearch" Grid.Row="2" Watermark="Filter properties…" Margin="12,0,12,8" />
+        <TextBlock Grid.Row="3" Text="Enter or leave a field to apply · ↺ resets" Foreground="#7A8297" FontSize="10" Margin="16,0,12,8" />
         <ScrollViewer Grid.Row="4" HorizontalScrollBarVisibility="Disabled">
           <StackPanel x:Name="PropertyPanel" Margin="12,0,12,16" Spacing="8" />
         </ScrollViewer>
       </Grid>
     </Grid>
-    <Border Grid.Row="3" Background="#1B1E28" Padding="14,5">
+
+    <!-- Bottom Status Bar -->
+    <Border Grid.Row="3" Background="#12141C" BorderBrush="#222634" BorderThickness="0,1,0,0" Padding="14,4">
       <Grid ColumnDefinitions="*,Auto">
-        <TextBlock x:Name="StatusLabel" Text="Ready" FontSize="11" Foreground="#B4BCD0" TextTrimming="CharacterEllipsis" />
-        <TextBlock Grid.Column="1" Text="AVALONIA 11  /  NATIVE PREVIEW" Foreground="#7E859B" FontSize="10" LetterSpacing="1" />
+        <TextBlock x:Name="StatusLabel" Text="Ready" FontSize="11" Foreground="#A4ADC2" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+          <Border Background="#1A1E2B" CornerRadius="4" Padding="6,2">
+            <TextBlock x:Name="StatusViewportBadge" Text="800 × 600 px" Foreground="#8892AB" FontSize="10" FontWeight="Medium" />
+          </Border>
+          <TextBlock Text="AVALONIA 11.3 · READYTORUN AOT" Foreground="#6C748C" FontSize="10" LetterSpacing="1" VerticalAlignment="Center" />
+        </StackPanel>
       </Grid>
     </Border>
   </Grid>

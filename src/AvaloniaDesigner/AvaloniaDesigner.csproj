@@ -5,7 +5,68 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
+
+    <!-- Application Metadata -->
+    <AssemblyName>AvaloniaDesigner</AssemblyName>
+    <Product>Avalonia Studio</Product>
+    <Title>Avalonia Studio</Title>
+    <Description>Professional standalone visual designer for Avalonia UI AXAML</Description>
+    <Company>Avalonia Studio</Company>
+    <Authors>Avalonia Studio Contributors</Authors>
+    <Version>1.1.0</Version>
+    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <FileVersion>1.1.0.0</FileVersion>
   </PropertyGroup>
+
+  <!--
+    AOT Compilation Architecture Note:
+    This designer uses AvaloniaRuntimeXamlLoader to dynamically parse, compile, and instantiate
+    arbitrary user-edited AXAML strings on the fly at runtime. Full Native AOT (<PublishAot>true</PublishAot>)
+    strips reflection metadata and disallows dynamic code emission (JIT), which makes runtime dynamic XAML
+    parsing incompatible.
+    
+    Instead, .NET's ReadyToRun (R2R) AOT compilation provides ahead-of-time native machine code compilation,
+    eliminating JIT startup overhead and maximizing launch speed while preserving the dynamic reflection
+    and JIT capabilities required for live AXAML rendering.
+    
+    For experimental builds testing Native AOT with pre-compiled views, pass -p:EnableNativeAot=true.
+  -->
+  <PropertyGroup Condition="'$(EnableNativeAot)' == 'true'">
+    <PublishAot>true</PublishAot>
+    <StripSymbols>true</StripSymbols>
+    <IlcOptimizationPreference>Speed</IlcOptimizationPreference>
+  </PropertyGroup>
+
+  <!-- Production Release Configuration -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release' and '$(EnableNativeAot)' != 'true'">
+    <Optimize>true</Optimize>
+    <DebugType>embedded</DebugType>
+    <!-- Ahead-Of-Time (AOT) Native Compilation via ReadyToRun -->
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishReadyToRunShowWarnings>true</PublishReadyToRunShowWarnings>
+    <!-- Standalone Single-File Deployment -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+  </PropertyGroup>
+
+  <!-- Platform-Specific Release Adjustments -->
+  <!-- Windows -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release' and $([MSBuild]::IsOSPlatform('Windows'))">
+    <TargetZone>LocalMachine</TargetZone>
+  </PropertyGroup>
+
+  <!-- macOS -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release' and ($([MSBuild]::IsOSPlatform('OSX')) or '$(RuntimeIdentifier.StartsWith(&quot;osx&quot;))' == 'true')">
+    <UseAppHost>true</UseAppHost>
+  </PropertyGroup>
+
+  <!-- Linux -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release' and ($([MSBuild]::IsOSPlatform('Linux')) or '$(RuntimeIdentifier.StartsWith(&quot;linux&quot;))' == 'true')">
+    <UseAppHost>true</UseAppHost>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Avalonia.Desktop" Version="11.3.22" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.22" />

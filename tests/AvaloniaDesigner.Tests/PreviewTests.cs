@@ -257,5 +257,117 @@ public sealed class PreviewTests(ITestOutputHelper output)
         finally { window.Close(); }
     }
 
+    [AvaloniaFact]
+    public void UserCanChangeViewportPresetsAndUpdateDimensions()
+    {
+        var window = new MainWindow();
+        window.Show();
+        try
+        {
+            window.UpdateLayout();
+            var presetPicker = window.FindControl<ComboBox>("PreviewViewportPresetPicker")!;
+            var artboard = window.FindControl<Grid>("Artboard")!;
+            var widthBox = window.FindControl<TextBox>("ViewportWidthBox")!;
+            var heightBox = window.FindControl<TextBox>("ViewportHeightBox")!;
+            var sizeLabel = window.FindControl<TextBlock>("SizeLabel")!;
+
+            // Default is 800x600
+            Assert.Equal(800, artboard.Width);
+            Assert.Equal(600, artboard.Height);
+            Assert.Equal("800", widthBox.Text);
+            Assert.Equal("600", heightBox.Text);
+            Assert.Equal("800 × 600", sizeLabel.Text);
+
+            // Select Phone preset (index 6: 390x844)
+            presetPicker.SelectedIndex = 6;
+            window.UpdateLayout();
+            Assert.Equal(390, artboard.Width);
+            Assert.Equal(844, artboard.Height);
+            Assert.Equal("390", widthBox.Text);
+            Assert.Equal("844", heightBox.Text);
+            Assert.Equal("390 × 844", sizeLabel.Text);
+
+            // Select Desktop HD preset (index 2: 1280x720)
+            presetPicker.SelectedIndex = 2;
+            window.UpdateLayout();
+            Assert.Equal(1280, artboard.Width);
+            Assert.Equal(720, artboard.Height);
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaFact]
+    public void UserCanTypeCustomViewportDimensionsAndFlipOrientation()
+    {
+        var window = new MainWindow();
+        window.Show();
+        try
+        {
+            window.UpdateLayout();
+            var artboard = window.FindControl<Grid>("Artboard")!;
+            var widthBox = window.FindControl<TextBox>("ViewportWidthBox")!;
+            var heightBox = window.FindControl<TextBox>("ViewportHeightBox")!;
+            var presetPicker = window.FindControl<ComboBox>("PreviewViewportPresetPicker")!;
+
+            // Custom dimensions: 950 x 550
+            widthBox.Text = "950";
+            widthBox.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Enter });
+            heightBox.Text = "550";
+            heightBox.RaiseEvent(new KeyEventArgs { RoutedEvent = InputElement.KeyDownEvent, Key = Key.Enter });
+
+            window.UpdateLayout();
+            Assert.Equal(950, artboard.Width);
+            Assert.Equal(550, artboard.Height);
+            Assert.Equal(presetPicker.ItemCount - 1, presetPicker.SelectedIndex); // Custom
+
+            // Flip orientation: 550 x 950
+            Click(window, "FlipViewportButton");
+            window.UpdateLayout();
+            Assert.Equal(550, artboard.Width);
+            Assert.Equal(950, artboard.Height);
+            Assert.Equal("550", widthBox.Text);
+            Assert.Equal("950", heightBox.Text);
+
+            // Reset viewport: 800 x 600
+            Click(window, "ResetViewportButton");
+            window.UpdateLayout();
+            Assert.Equal(800, artboard.Width);
+            Assert.Equal(600, artboard.Height);
+            Assert.Equal(0, presetPicker.SelectedIndex);
+        }
+        finally { window.Close(); }
+    }
+
+    [AvaloniaFact]
+    public void UserCanDragViewportCornerHandleToResize()
+    {
+        var window = new MainWindow();
+        window.Width = 1600; window.Height = 1100;
+        window.Show();
+        try
+        {
+            window.UpdateLayout();
+            var artboard = window.FindControl<Grid>("Artboard")!;
+            var corner = window.FindControl<Border>("ViewportResizeCorner")!;
+            var scroll = window.FindControl<ScrollViewer>("DesignScroll")!;
+
+            Assert.Equal(800, artboard.Width);
+            Assert.Equal(600, artboard.Height);
+
+            var startPos = corner.TranslatePoint(new Point(8, 8), window);
+                        if (startPos.HasValue)
+            {
+                                window.MouseDown(startPos.Value, MouseButton.Left);
+                window.MouseMove(startPos.Value + new Point(80, 48));
+                window.MouseUp(startPos.Value + new Point(80, 48), MouseButton.Left);
+            }
+
+            window.UpdateLayout();
+                        Assert.Equal(880, artboard.Width);
+            Assert.Equal(648, artboard.Height);
+        }
+        finally { window.Close(); }
+    }
+
     private static void Click(Window window, string name) => window.FindControl<Button>(name)!.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
 }

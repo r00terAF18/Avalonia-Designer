@@ -26,6 +26,7 @@ public sealed partial class MainWindow : Window
     private string? filePath;
     private string? savedDiskText;
     private bool updating;
+    private bool updatingViewport;
     private bool sourceDirty;
     private bool allowClose;
     private bool confirmingClose;
@@ -40,6 +41,20 @@ public sealed partial class MainWindow : Window
     // Zoom steps matching ZoomPicker indices: 50%, 75%, 100%, 125%, 150%
     private static readonly double[] ZoomSteps = [0.5, 0.75, 1.0, 1.25, 1.5];
 
+    // Standard viewport size presets (index matches combobox items 0..8)
+    public static readonly (string Name, double Width, double Height)[] ViewportPresets =
+    [
+        ("Desktop · 800×600", 800, 600),
+        ("Laptop · 1366×768", 1366, 768),
+        ("Desktop HD · 1280×720", 1280, 720),
+        ("Desktop FHD · 1920×1080", 1920, 1080),
+        ("Tablet Portrait · 768×1024", 768, 1024),
+        ("Tablet Landscape · 1024×768", 1024, 768),
+        ("Phone · 390×844", 390, 844),
+        ("Mobile Large · 412×915", 412, 915),
+        ("Dialog · 480×320", 480, 320),
+    ];
+
     public MainWindow()
     {
         InitializeComponent();
@@ -49,6 +64,7 @@ public sealed partial class MainWindow : Window
         ConfigureCommands();
         ConfigureSurface();
         ConfigureThemes();
+        ConfigureViewport();
 
         debounceTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(600) };
         debounceTimer.Tick += (_, _) =>
@@ -183,25 +199,118 @@ public sealed partial class MainWindow : Window
             SelectionLayer.IsVisible = InputLayer.IsVisible;
             StatusLabel.Text = InputLayer.IsVisible ? "Design mode · drag to move, bottom-right handle to resize" : "Interaction mode · controls are live";
         };
+        DismissErrorButton.Click += (_, _) => ErrorPanel.IsVisible = false;
     }
 
     private void ConfigureThemes()
     {
         ThemePicker.SelectionChanged += (_, _) => ApplyTheme();
         VariantPicker.SelectionChanged += (_, _) => ApplyTheme();
-        ViewportPicker.SelectionChanged += (_, _) =>
-        {
-            var size = ViewportPicker.SelectedIndex switch { 1 => new Size(768, 1024), 2 => new Size(390, 844), _ => new Size(800, 600) };
-            Artboard.Width = size.Width;
-            Artboard.Height = size.Height;
-            SizeLabel.Text = $"{size.Width} × {size.Height}";
-        };
         ZoomPicker.SelectionChanged += (_, _) =>
         {
             zoom = ZoomPicker.SelectedIndex switch { 0 => 0.5, 1 => 0.75, 3 => 1.25, 4 => 1.5, _ => 1 };
             ZoomHost.LayoutTransform = new ScaleTransform(zoom, zoom);
         };
         ApplyTheme();
+    }
+
+    private void ConfigureViewport()
+    {
+        ViewportPicker.SelectionChanged += (_, _) =>
+        {
+            if (updatingViewport) return;
+            updatingViewport = true;
+            try
+            {
+                var index = ViewportPicker.SelectedIndex;
+                if (index >= 0 && index < ViewportPresets.Length)
+                {
+                    var preset = ViewportPresets[index];
+                    SetViewportSize(preset.Width, preset.Height, updateInputs: true, updatePresets: false);
+                    PreviewViewportPresetPicker.SelectedIndex = index;
+                }
+                else if (index == ViewportPresets.Length)
+                {
+                    PreviewViewportPresetPicker.SelectedIndex = index;
+                }
+            }
+            finally { updatingViewport = false; }
+        };
+
+        PreviewViewportPresetPicker.SelectionChanged += (_, _) =>
+        {
+            if (updatingViewport) return;
+            updatingViewport = true;
+            try
+            {
+                var index = PreviewViewportPresetPicker.SelectedIndex;
+                if (index >= 0 && index < ViewportPresets.Length)
+                {
+                    var preset = ViewportPresets[index];
+                    SetViewportSize(preset.Width, preset.Height, updateInputs: true, updatePresets: false);
+                    ViewportPicker.SelectedIndex = index;
+                }
+                else if (index == ViewportPresets.Length)
+                {
+                    ViewportPicker.SelectedIndex = index;
+                }
+            }
+            finally { updatingViewport = false; }
+        };
+
+        void ApplyCustomViewportFromInputs()
+        {
+            if (double.TryParse(ViewportWidthBox.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var w)
+                && double.TryParse(ViewportHeightBox.Text, NumberStyles.Float, CultureInfo.InvariantCulture, out var h))
+            {
+                SetViewportSize(w, h, updateInputs: true, updatePresets: true);
+            }
+            else
+            {
+                ViewportWidthBox.Text = Artboard.Width.ToString(CultureInfo.InvariantCulture);
+                ViewportHeightBox.Text = Artboard.Height.ToString(CultureInfo.InvariantCulture);
+            }
+        }
+
+        ViewportWidthBox.LostFocus += (_, _) => ApplyCustomViewportFromInputs();
+        ViewportWidthBox.KeyDown += (_, args) => { if (args.Key == Key.Enter) { args.Handled = true; ApplyCustomViewportFromInputs(); } };
+        ViewportHeightBox.LostFocus += (_, _) => ApplyCustomViewportFromInputs();
+        ViewportHeightBox.KeyDown += (_, args) => { if (args.Key == Key.Enter) { args.Handled = true; ApplyCustomViewportFromInputs(); } };
+
+        FlipViewportButton.Click += (_, _) => SetViewportSize(Artboard.Height, Artboard.Width, updateInputs: true, updatePresets: true);
+        ResetViewportButton.Click += (_, _) => SetViewportSize(800, 600, updateInputs: true, updatePresets: true);
+        FitZoomButton.Click += (_, _) => ZoomPicker.SelectedIndex = 2; // 100%
+    }
+
+    public void SetViewportSize(double width, double height, bool updateInputs = true, bool updatePresets = true)
+    {
+        width = Math.Clamp(Math.Round(width), 200, 3840);
+        height = Math.Clamp(Math.Round(height), 200, 3840);
+
+        Artboard.Width = width;
+        Artboard.Height = height;
+        var label = $"{width} × {height}";
+        SizeLabel.Text = label;
+        StatusViewportBadge.Text = label + " px";
+
+        if (updateInputs)
+        {
+            ViewportWidthBox.Text = width.ToString(CultureInfo.InvariantCulture);
+            ViewportHeightBox.Text = height.ToString(CultureInfo.InvariantCulture);
+        }
+
+        if (updatePresets)
+        {
+            var matchIndex = Array.FindIndex(ViewportPresets, p => Math.Abs(p.Width - width) < 0.5 && Math.Abs(p.Height - height) < 0.5);
+            var targetIndex = matchIndex >= 0 ? matchIndex : ViewportPresets.Length;
+
+            if (ViewportPicker.SelectedIndex != targetIndex)
+                ViewportPicker.SelectedIndex = targetIndex;
+            if (PreviewViewportPresetPicker.SelectedIndex != targetIndex)
+                PreviewViewportPresetPicker.SelectedIndex = targetIndex;
+        }
+
+        UpdateSelectionBounds();
     }
 
     private void ApplyTheme()
@@ -286,8 +395,6 @@ public sealed partial class MainWindow : Window
         }
         catch (Exception error)
         {
-            // Don't clear sourceDirty — the draft is still there.
-            // Show error but keep the last valid preview (Refresh handles that).
             ShowError(error);
             if (lastValidPreview != null)
                 ErrorLabel.Text = ErrorLabel.Text + "\n(Preview shows last valid state)";
@@ -401,14 +508,13 @@ public sealed partial class MainWindow : Window
                     selectedPath = DesignDocument.PathOf(deepCopy);
                 }
             });
-        }, $"Pasted");
+        }, "Pasted");
     }
 
     private void DeleteSelection() => RunEdit(() => document.Delete(selectedPath), "Control deleted");
     private void ShowError(Exception error) => ShowError(PreviewRenderer.ErrorMessage(error));
     private void ShowError(string message) { ErrorLabel.Text = message; ErrorPanel.IsVisible = true; StatusLabel.Text = "Edit not applied · see details above the source editor"; }
 
-    // Feature 2: Ctrl+scroll wheel zoom on the design canvas.
     private void OnDesignScrollWheel(object? sender, PointerWheelEventArgs args)
     {
         if (!args.KeyModifiers.HasFlag(KeyModifiers.Control)) return;
@@ -417,14 +523,12 @@ public sealed partial class MainWindow : Window
         var delta = args.Delta.Y;
         if (delta == 0) return;
 
-        // Find the nearest zoom step in the direction of scroll.
         var currentIndex = ZoomPicker.SelectedIndex;
         var nextIndex = delta > 0 ? currentIndex + 1 : currentIndex - 1;
         nextIndex = Math.Clamp(nextIndex, 0, ZoomSteps.Length - 1);
         if (nextIndex == currentIndex) return;
 
         ZoomPicker.SelectedIndex = nextIndex;
-        // ZoomPicker.SelectionChanged handler updates zoom and ZoomHost.LayoutTransform.
     }
 
     private async void HandleShortcuts(object? sender, KeyEventArgs args)
@@ -448,6 +552,21 @@ public sealed partial class MainWindow : Window
                 case Key.O: args.Handled = true; await OpenFile(); return;
                 case Key.Enter: args.Handled = true; ApplySource(); return;
                 case Key.N: args.Handled = true; NewButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); return;
+                case Key.D0:
+                case Key.NumPad0:
+                    args.Handled = true;
+                    ZoomPicker.SelectedIndex = 2; // 100%
+                    return;
+                case Key.OemPlus:
+                case Key.Add:
+                    args.Handled = true;
+                    ZoomPicker.SelectedIndex = Math.Min(ZoomPicker.SelectedIndex + 1, ZoomSteps.Length - 1);
+                    return;
+                case Key.OemMinus:
+                case Key.Subtract:
+                    args.Handled = true;
+                    ZoomPicker.SelectedIndex = Math.Max(ZoomPicker.SelectedIndex - 1, 0);
+                    return;
             }
         }
         if (args.Source is Visual visual && visual.GetSelfAndVisualAncestors().Any(parent => parent is TextBox)) return;

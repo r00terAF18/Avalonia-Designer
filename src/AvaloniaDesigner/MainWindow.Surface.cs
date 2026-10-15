@@ -19,8 +19,15 @@ public sealed partial class MainWindow
     private Size startSize;
     private Rect? selectedBounds;
 
+    private Point? viewportGestureStart;
+    private IPointer? viewportPointer;
+    private Size viewportStartSize;
+    private int viewportResizeDirection; // 1 = right (width), 2 = bottom (height), 3 = corner (both)
+
     private void ConfigureSurface()
     {
+        ConfigureViewportResizing();
+
         InputLayer.AddHandler(RequestBringIntoViewEvent, (_, args) => args.Handled = true);
         InputLayer.PointerPressed += BeginGesture;
         InputLayer.PointerMoved += UpdateGesture;
@@ -66,6 +73,57 @@ public sealed partial class MainWindow
             }, "Control added");
             args.Handled = true;
         });
+    }
+
+    private void ConfigureViewportResizing()
+    {
+        void Attach(Border handle, int direction)
+        {
+            handle.PointerPressed += (s, e) =>
+            {
+                if (!e.GetCurrentPoint(handle).Properties.IsLeftButtonPressed) return;
+                viewportGestureStart = e.GetPosition(this);
+                viewportStartSize = new Size(Artboard.Width, Artboard.Height);
+                viewportResizeDirection = direction;
+                viewportPointer = e.Pointer;
+                e.Pointer.Capture(handle);
+                e.Handled = true;
+            };
+            handle.PointerMoved += (s, e) =>
+            {
+                if (viewportGestureStart == null || viewportPointer == null) return;
+                var currentPos = e.GetPosition(this);
+                var delta = (currentPos - viewportGestureStart.Value) / zoom;
+                var newWidth = viewportStartSize.Width;
+                var newHeight = viewportStartSize.Height;
+
+                if (viewportResizeDirection is 1 or 3)
+                    newWidth = Math.Clamp(Snap(viewportStartSize.Width + delta.X), 200, 3840);
+                if (viewportResizeDirection is 2 or 3)
+                    newHeight = Math.Clamp(Snap(viewportStartSize.Height + delta.Y), 200, 3840);
+
+                SetViewportSize(newWidth, newHeight, updateInputs: true, updatePresets: true);
+                e.Handled = true;
+            };
+            handle.PointerReleased += (s, e) =>
+            {
+                if (viewportGestureStart == null) return;
+                viewportGestureStart = null;
+                viewportPointer?.Capture(null);
+                viewportPointer = null;
+                UpdateSelectionBounds();
+                e.Handled = true;
+            };
+            handle.PointerCaptureLost += (s, e) =>
+            {
+                viewportGestureStart = null;
+                viewportPointer = null;
+            };
+        }
+
+        Attach(ViewportResizeRight, 1);
+        Attach(ViewportResizeBottom, 2);
+        Attach(ViewportResizeCorner, 3);
     }
 
     private void ConfigureToolboxDrag()
