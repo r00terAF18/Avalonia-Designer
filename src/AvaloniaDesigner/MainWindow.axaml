@@ -1,0 +1,130 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="AvaloniaDesigner.MainWindow"
+        Title="Avalonia Studio" Width="1500" Height="940" MinWidth="1100" MinHeight="720"
+        Classes="studio" WindowStartupLocation="CenterScreen">
+  <Grid RowDefinitions="60,48,*,30">
+    <Border Background="#181B23" BorderBrush="#2B2F3C" BorderThickness="0,0,0,1" Padding="18,0">
+      <Grid ColumnDefinitions="240,*,Auto">
+        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+          <Border Background="#7864E8" Width="30" Height="30" CornerRadius="8">
+            <TextBlock Text="A" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </Border>
+          <TextBlock Text="avalonia" FontSize="19" FontWeight="SemiBold" VerticalAlignment="Center" />
+          <TextBlock Text="STUDIO" FontSize="10" Foreground="#A797FF" VerticalAlignment="Center" LetterSpacing="2" />
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4" VerticalAlignment="Center">
+          <Button x:Name="NewButton" Content="New" Classes="tool" ToolTip.Tip="New view · Ctrl/Cmd+N" />
+          <Button x:Name="OpenButton" Content="Open" Classes="tool" ToolTip.Tip="Open AXAML · Ctrl/Cmd+O" />
+          <Button x:Name="RecentButton" Content="Recent" Classes="tool" ToolTip.Tip="Open a recent file" />
+          <Button x:Name="SaveButton" Content="Save" Classes="tool" ToolTip.Tip="Save · Ctrl/Cmd+S" />
+          <Button x:Name="SaveAsButton" Content="Save as…" Classes="tool" />
+          <Border Width="1" Background="#373B49" Margin="10,8" />
+          <Button x:Name="UndoButton" Content="↶" Classes="tool" ToolTip.Tip="Undo · Ctrl/Cmd+Z" />
+          <Button x:Name="RedoButton" Content="↷" Classes="tool" ToolTip.Tip="Redo · Ctrl/Cmd+Shift+Z" />
+        </StackPanel>
+        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+          <TextBlock x:Name="FileLabel" Text="Untitled.axaml" Foreground="#9DA3B7" VerticalAlignment="Center" MaxWidth="240" TextTrimming="CharacterEllipsis" />
+          <ToggleButton x:Name="InteractButton" Content="▶  Interact" ToolTip.Tip="Use the actual controls without selecting them" />
+        </StackPanel>
+      </Grid>
+    </Border>
+    <Border Grid.Row="1" Background="#14171E" BorderBrush="#2B2F3C" BorderThickness="0,0,0,1" Padding="16,6">
+      <Grid ColumnDefinitions="240,*,Auto">
+        <TextBlock Text="DESIGN WORKSPACE" Classes="section" VerticalAlignment="Center" Margin="0" />
+        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+          <ComboBox x:Name="ThemePicker" Width="105" SelectedIndex="0">
+            <ComboBoxItem Content="Fluent" /><ComboBoxItem Content="Simple" />
+          </ComboBox>
+          <ComboBox x:Name="VariantPicker" Width="95" SelectedIndex="0">
+            <ComboBoxItem Content="Dark" /><ComboBoxItem Content="Light" />
+          </ComboBox>
+          <ComboBox x:Name="ViewportPicker" Width="150" SelectedIndex="0">
+            <ComboBoxItem Content="Desktop · 800×600" /><ComboBoxItem Content="Tablet · 768×1024" /><ComboBoxItem Content="Phone · 390×844" />
+          </ComboBox>
+          <CheckBox x:Name="SnapCheck" Content="Snap 8px" IsChecked="True" VerticalAlignment="Center" />
+        </StackPanel>
+        <ComboBox x:Name="ZoomPicker" Grid.Column="2" Width="90" SelectedIndex="2">
+          <ComboBoxItem Content="50%" /><ComboBoxItem Content="75%" /><ComboBoxItem Content="100%" /><ComboBoxItem Content="125%" /><ComboBoxItem Content="150%" />
+        </ComboBox>
+      </Grid>
+    </Border>
+    <Grid Grid.Row="2" ColumnDefinitions="240,5,*,5,300">
+      <Grid Background="#181B23" RowDefinitions="*,5,*">
+        <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="12">
+          <TextBlock Text="TOOLBOX" Classes="section" />
+          <TextBox x:Name="ToolSearch" Grid.Row="1" Watermark="Search controls…" Margin="0,0,0,10" />
+          <ListBox x:Name="ToolList" Grid.Row="2" Background="Transparent" />
+          <Button x:Name="AddButton" Grid.Row="3" Content="＋  Add to selection" Classes="primary" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Margin="0,10,0,0" />
+        </Grid>
+        <GridSplitter Grid.Row="1" ResizeDirection="Rows" HorizontalAlignment="Stretch" Background="#2B2F3C" />
+        <Grid Grid.Row="2" RowDefinitions="Auto,*,Auto" Margin="12,4,12,12">
+          <TextBlock Text="DOCUMENT OUTLINE" Classes="section" />
+          <ListBox x:Name="OutlineList" Grid.Row="1" Background="Transparent" />
+          <StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="3" Margin="0,8,0,0">
+            <Button x:Name="UpButton" Content="↑" ToolTip.Tip="Move earlier" />
+            <Button x:Name="DownButton" Content="↓" ToolTip.Tip="Move later" />
+            <Button x:Name="DuplicateButton" Content="⧉" ToolTip.Tip="Duplicate · Ctrl/Cmd+D" />
+            <Button x:Name="PasteButton" Content="⎘" ToolTip.Tip="Paste · Ctrl+V" />
+            <Button x:Name="DeleteButton" Content="Delete" ToolTip.Tip="Delete selected control" />
+          </StackPanel>
+        </Grid>
+      </Grid>
+      <GridSplitter Grid.Column="1" ResizeDirection="Columns" Background="#2B2F3C" />
+      <Grid Grid.Column="2" RowDefinitions="*,Auto,5,230">
+        <ScrollViewer x:Name="DesignScroll" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Background="#101218">
+          <StackPanel HorizontalAlignment="Center" Margin="36,24">
+            <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,12">
+              <TextBlock Text="VIEW / LIVE PREVIEW" Foreground="#7E859B" FontSize="10" LetterSpacing="1.5" />
+              <TextBlock x:Name="SizeLabel" Grid.Column="1" Text="800 × 600" Foreground="#7E859B" FontSize="10" />
+            </Grid>
+            <LayoutTransformControl x:Name="ZoomHost">
+              <Grid x:Name="Artboard" Width="800" Height="600" ClipToBounds="True" Background="#20232C">
+                <ThemeVariantScope x:Name="PreviewTheme">
+                  <Border x:Name="PreviewHost" Background="{DynamicResource ThemeBackgroundBrush}" />
+                </ThemeVariantScope>
+                <Canvas x:Name="SelectionLayer" IsHitTestVisible="False">
+                  <Border x:Name="SelectionBorder" BorderBrush="#A391FF" BorderThickness="2" IsVisible="False" />
+                  <Border x:Name="ResizeHandle" Width="10" Height="10" Background="#A391FF" BorderBrush="White" BorderThickness="1" IsVisible="False" />
+                </Canvas>
+                <Border x:Name="InputLayer" Background="Transparent" Focusable="True" />
+              </Grid>
+            </LayoutTransformControl>
+          </StackPanel>
+        </ScrollViewer>
+        <Border x:Name="ErrorPanel" Grid.Row="1" Background="#3C222D" Padding="12,8" IsVisible="False">
+          <TextBlock x:Name="ErrorLabel" Foreground="#FFAFBF" TextWrapping="Wrap" MaxHeight="80" />
+        </Border>
+        <GridSplitter Grid.Row="2" ResizeDirection="Rows" HorizontalAlignment="Stretch" Background="#2B2F3C" />
+        <Grid Grid.Row="3" RowDefinitions="42,*" Background="#151820">
+          <Grid ColumnDefinitions="*,Auto,Auto,Auto" Margin="12,5">
+            <TextBlock x:Name="SourceLabel" Text="AXAML SOURCE" Classes="section" Margin="0" VerticalAlignment="Center" />
+            <Button x:Name="StyleButton" Grid.Column="1" Content="Create style…" Classes="tool" />
+            <Button x:Name="RevertSourceButton" Grid.Column="2" Content="Revert draft" Classes="tool" Margin="0,0,8,0" />
+            <Button x:Name="ApplySourceButton" Grid.Column="3" Content="Apply AXAML" Classes="primary" ToolTip.Tip="Apply source · Ctrl/Cmd+Enter" />
+          </Grid>
+          <TextBox x:Name="SourceEditor" Grid.Row="1" AcceptsReturn="True" AcceptsTab="True"
+                   FontFamily="Cascadia Code, DejaVu Sans Mono, monospace" FontSize="12"
+                   TextWrapping="NoWrap" Background="#11141B" BorderThickness="0" Padding="16,12"
+                   ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" />
+        </Grid>
+      </Grid>
+      <GridSplitter Grid.Column="3" ResizeDirection="Columns" Background="#2B2F3C" />
+      <Grid Grid.Column="4" Background="#181B23" RowDefinitions="Auto,Auto,Auto,Auto,*" Margin="0">
+        <TextBlock Text="INSPECTOR" Classes="section" Margin="16,18,16,8" />
+        <TextBlock x:Name="SelectionTitle" Grid.Row="1" Text="Select a control" FontSize="21" FontWeight="SemiBold" Margin="16,0,16,12" />
+        <TextBox x:Name="PropertySearch" Grid.Row="2" Watermark="Filter properties…" Margin="12,0,12,10" />
+        <TextBlock Grid.Row="3" Text="Enter or leave a field to apply · ↺ resets" Foreground="#838BA2" FontSize="10" Margin="16,0,12,10" />
+        <ScrollViewer Grid.Row="4" HorizontalScrollBarVisibility="Disabled">
+          <StackPanel x:Name="PropertyPanel" Margin="12,0,12,16" Spacing="8" />
+        </ScrollViewer>
+      </Grid>
+    </Grid>
+    <Border Grid.Row="3" Background="#1B1E28" Padding="14,5">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock x:Name="StatusLabel" Text="Ready" FontSize="11" Foreground="#B4BCD0" TextTrimming="CharacterEllipsis" />
+        <TextBlock Grid.Column="1" Text="AVALONIA 11  /  NATIVE PREVIEW" Foreground="#7E859B" FontSize="10" LetterSpacing="1" />
+      </Grid>
+    </Border>
+  </Grid>
+</Window>

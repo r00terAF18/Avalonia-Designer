@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <UserControl.Styles>
+    <Style Selector="TextBlock.fieldLabel">
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Margin" Value="0,0,0,6" />
+    </Style>
+    <Style Selector="Button.primaryAction">
+      <Setter Property="Background" Value="#7864E8" />
+      <Setter Property="Foreground" Value="White" />
+      <Setter Property="Padding" Value="20,10" />
+      <Setter Property="CornerRadius" Value="6" />
+    </Style>
+  </UserControl.Styles>
+  <ScrollViewer Background="{DynamicResource ThemeBackgroundBrush}">
+    <Grid Margin="32" RowDefinitions="Auto,Auto,Auto,*" MaxWidth="600">
+      <TextBlock Text="Project settings" FontSize="28" FontWeight="SemiBold" />
+      <TextBlock Grid.Row="1" Text="A responsive layout using Grid and StackPanel." Opacity="0.65" Margin="0,8,0,24" TextWrapping="Wrap" />
+      <StackPanel Grid.Row="2" Spacing="18">
+        <StackPanel>
+          <TextBlock Text="Project name" Classes="fieldLabel" />
+          <TextBox Watermark="Enter a project name" />
+        </StackPanel>
+        <StackPanel>
+          <TextBlock Text="Description" Classes="fieldLabel" />
+          <TextBox Watermark="What are you building?" AcceptsReturn="True" MinHeight="88" TextWrapping="Wrap" />
+        </StackPanel>
+        <Grid ColumnDefinitions="*,16,*">
+          <StackPanel>
+            <TextBlock Text="Layout" Classes="fieldLabel" />
+            <ComboBox SelectedIndex="0" HorizontalAlignment="Stretch">
+              <ComboBoxItem Content="Responsive" />
+              <ComboBoxItem Content="Fixed canvas" />
+            </ComboBox>
+          </StackPanel>
+          <StackPanel Grid.Column="2">
+            <TextBlock Text="Spacing" Classes="fieldLabel" />
+            <NumericUpDown Value="16" Minimum="0" Maximum="64" Increment="4" />
+          </StackPanel>
+        </Grid>
+        <ToggleSwitch Content="Enable notifications" IsChecked="True" />
+        <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,8,0,0">
+          <Button Content="Save settings" Classes="primaryAction" />
+          <Button Content="Cancel" Padding="20,10" />
+        </StackPanel>
+      </StackPanel>
+    </Grid>
+  </ScrollViewer>
+</UserControl>
